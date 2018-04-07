@@ -152,3 +152,4 @@ if __name__ == '__main__':
 		if is_dst(dictCode[flight[3]]):
 			flight[0] = flight[0] - timedelta(hours=1)		
 		auto_checkin(firstName, lastName, confirmation, flight[0], phone)
+		
