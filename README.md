@@ -3,3 +3,4 @@
 ## Install Firefox
 ## pip install pytz
 ## pip install selenium
+## Download geckodriver
