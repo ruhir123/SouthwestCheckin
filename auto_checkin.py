@@ -76,13 +76,18 @@ def auto_checkin(firstName, lastName, confirmation, flightDateTime=None, phone =
 		print "\n\n\nThis flight seems to have already left... Not checking in\n\n\n"
 		return
 
-	waitTime = waitTime - timedelta(days=1)
+	#waitTime = waitTime - timedelta(days=1)
 	#print waitTime
 
-	wtime = waitTime.total_seconds()
-	print("Waiting for ", wtime, "time", waitTime)
+	#wtime = waitTime.total_seconds()
+	#print("Waiting for ", wtime, "time", waitTime)
+
+	# Launch Firefox GUI
+	browser = webdriver.Firefox()
+	checkinTime = flightDateTime - timedelta(days=1)
+	wtime = (checkinTime - utc.localize(datetime.utcnow())).total_seconds()
 	while (wtime > 0):
-		wtime = wtime -10
+		wtime = (checkinTime - utc.localize(datetime.utcnow())).total_seconds()
 		timeModule.sleep(10)
 		wdays = int(wtime/60/60/24)
 		whours = int((wtime - wdays*60*60*24)/60/60)
@@ -94,8 +99,6 @@ def auto_checkin(firstName, lastName, confirmation, flightDateTime=None, phone =
 	print("Time to Checkin ...", checkinUrl)
 
 	loop = True
-	# Launch Firefox GUI
-	browser = webdriver.Firefox()
 	browser.get(checkinUrl)
 	html = browser.page_source
 
@@ -137,7 +140,7 @@ def auto_checkin(firstName, lastName, confirmation, flightDateTime=None, phone =
 		button = browser.find_element_by_xpath('//*[@id="form-mixin--submit-button"]')
 		button.click()
 
-	browser.quit()
+	#browser.quit()
 
 	
 if __name__ == '__main__':
@@ -152,4 +155,3 @@ if __name__ == '__main__':
 		if is_dst(dictCode[flight[3]]):
 			flight[0] = flight[0] - timedelta(hours=1)		
 		auto_checkin(firstName, lastName, confirmation, flight[0], phone)
-		
