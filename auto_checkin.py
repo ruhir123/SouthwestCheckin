@@ -1,10 +1,14 @@
+#! /usr/bin/env python
+
 import re, sys, sched, datetime, urllib, urllib2, urlparse
 import time as timeModule
 from datetime import datetime,date,timedelta,time
 from pytz import timezone,utc
+import os, platform, getopt
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from multiprocessing import Process as Thread
 
 dictCode = {}
 fname = "Airport_TZ.info"
@@ -144,15 +148,57 @@ def auto_checkin(firstName, lastName, confirmation, flightDateTime=None, phone =
 		except:
 			print("wierd error -- No Text For You -- ")
 
-	#browser.quit()
+	timeModule.sleep(10)
+	browser.quit()
 
-	
-if __name__ == '__main__':
 
-	firstName = raw_input("First Name: ")
-	lastName = raw_input("Last Name: ")
-	confirmation = raw_input("Confirmation Number: ")
-	phone = raw_input("Phone Number: ")
+def main(argv):
+
+   firstName = ''
+   lastName = ''
+   confirmation = ''
+   phone = None
+
+   try:
+      opts, args = getopt.getopt(argv,"hf:l:c:p:",["fname=","lname=","confirmation=","phone="])
+   except getopt.GetoptError:
+      print 'test.py -f <firstName> -l <lastName> -c <confirmation> -p <phone>'
+      sys.exit(2)
+
+   for opt, arg in opts:
+      if opt == '-h':
+         print 'test.py -f <firstName> -l <lastName> -c <confirmation> -p <phone>'
+         sys.exit()
+      elif opt in ("-f", "--fname"):
+         firstName = arg
+      elif opt in ("-l", "--lname"):
+         lastName = arg
+      elif opt in ("-c", "--confirmation"):
+         confirmation = arg
+      elif opt in ("-p", "--phone"):
+         phone = arg
+
+   time = 1000000
+
+   if platform.system() == 'Darwin': # MACOS needs caffienate
+		t1 = Thread(target=doCheckIn,args=(firstName,lastName,confirmation,phone,))
+		t2 = Thread(target=runCaffeinate,args=(time,))
+
+		t1.start()
+		t2.start()
+
+		print("Waiting to join")
+		t1.join()
+		t2.terminate()
+		print("Finished Thread1")
+
+   else:
+		doCheckIn(firstName,lastName,confirmation,phone)
+
+def runCaffeinate(time):
+	os.system('caffeinate -t 0')
+
+def doCheckIn(firstName,lastName,confirmation,phone):
 
 	flightinfo = find_times(firstName, lastName, confirmation)
 	for flight in flightinfo:
@@ -160,4 +206,6 @@ if __name__ == '__main__':
 			flight[0] = flight[0] - timedelta(hours=1)		
 		auto_checkin(firstName, lastName, confirmation, flight[0], phone)
 
-
+	
+if __name__ == '__main__':
+	main(sys.argv[1:])
