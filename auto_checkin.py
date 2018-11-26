@@ -111,11 +111,12 @@ def auto_checkin(firstName, lastName, confirmation, flightDateTime=None, phone =
 			err = browser.find_element_by_class_name('error-reservation-not-found')
 			print("Found Element Error ", err)
 		except:
-			print("No Error Found: Success")
+			print("No Error Found: Success at ", datetime.now())
 			loop = False
 
 		button = browser.find_element_by_class_name('submit-button')
 		button.click()
+		timeModule.sleep(10)
 		html = browser.page_source
 
 	## Print boarding Position
@@ -130,15 +131,18 @@ def auto_checkin(firstName, lastName, confirmation, flightDateTime=None, phone =
 
 	## Text the boarding pass
 	if phone:
-		phBtn = browser.find_element_by_class_name('boarding-pass-options--button-text')
-		phBtn.click()
-		inp1 = browser.find_element_by_xpath('//*[@id="textBoardingPass"]')
-		inp1.click()
-		inp1.send_keys(phone)
-		timeModule.sleep(10)
-		#button = browser.find_element_by_class_name('submit-button')
-		button = browser.find_element_by_xpath('//*[@id="form-mixin--submit-button"]')
-		button.click()
+		try:
+			phBtn = browser.find_element_by_class_name('boarding-pass-options--button-text')
+			phBtn.click()
+			inp1 = browser.find_element_by_xpath('//*[@id="textBoardingPass"]')
+			inp1.click()
+			inp1.send_keys(phone)
+			timeModule.sleep(10)
+			#button = browser.find_element_by_class_name('submit-button')
+			button = browser.find_element_by_xpath('//*[@id="form-mixin--submit-button"]')
+			button.click()
+		except:
+			print("wierd error -- No Text For You -- ")
 
 	#browser.quit()
 
@@ -155,3 +159,5 @@ if __name__ == '__main__':
 		if is_dst(dictCode[flight[3]]):
 			flight[0] = flight[0] - timedelta(hours=1)		
 		auto_checkin(firstName, lastName, confirmation, flight[0], phone)
+
+
