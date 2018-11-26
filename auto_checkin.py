@@ -162,12 +162,12 @@ def main(argv):
    try:
       opts, args = getopt.getopt(argv,"hf:l:c:p:",["fname=","lname=","confirmation=","phone="])
    except getopt.GetoptError:
-      print 'test.py -f <firstName> -l <lastName> -c <confirmation> -p <phone>'
+      print 'auto_checkin.py -f <firstName> -l <lastName> -c <confirmation> -p <phone>'
       sys.exit(2)
 
    for opt, arg in opts:
       if opt == '-h':
-         print 'test.py -f <firstName> -l <lastName> -c <confirmation> -p <phone>'
+         print 'auto_checkin.py -f <firstName> -l <lastName> -c <confirmation> -p <phone>'
          sys.exit()
       elif opt in ("-f", "--fname"):
          firstName = arg
