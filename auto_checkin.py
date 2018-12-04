@@ -89,7 +89,7 @@ def auto_checkin(firstName, lastName, confirmation, flightDateTime=None, phone =
    # Launch Firefox GUI
    checkinTime = flightDateTime - timedelta(days=1)
    wtime = (checkinTime - utc.localize(datetime.utcnow())).total_seconds()
-   while (wtime > 10):
+   while (wtime > 20):
       wtime = (checkinTime - utc.localize(datetime.utcnow())).total_seconds()
       timeModule.sleep(10)
       wdays = int(wtime/60/60/24)
@@ -103,6 +103,7 @@ def auto_checkin(firstName, lastName, confirmation, flightDateTime=None, phone =
 
    loop = True
    browser = webdriver.Firefox()
+   timeModule.sleep(10)
    browser.get(checkinUrl)
    html = browser.page_source
 
